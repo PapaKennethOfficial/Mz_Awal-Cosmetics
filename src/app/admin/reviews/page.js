@@ -63,52 +63,47 @@ export default function AdminReviews() {
       ) : reviews.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>No reviews yet.</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Rating</th>
-              <th>Review</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reviews.map((review) => (
-              <tr key={review.id}>
-                <td>{new Date(review.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
-                <td style={{ fontWeight: "600" }}>{review.author}</td>
-                <td>{review.product?.name || "Unknown"}</td>
-                <td style={{ color: "#ffd700" }}>{renderStars(review.rating)}</td>
-                <td style={{ maxWidth: "300px" }}>&ldquo;{review.content.substring(0, 100)}{review.content.length > 100 ? "..." : ""}&rdquo;</td>
-                <td>
-                  <span style={{
-                    background: review.published ? "#d4edda" : "#f8d7da",
-                    color: review.published ? "#155724" : "#721c24",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                    fontWeight: "bold",
-                  }}>
-                    {review.published ? "Published" : "Hidden"}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="admin-action-btn"
-                    style={{ background: review.published ? "#cc0000" : "#28a745" }}
-                    disabled={togglingId === review.id}
-                    onClick={() => togglePublished(review.id, review.published)}
-                  >
-                    {review.published ? "Hide" : "Show"}
-                  </button>
-                </td>
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Rating</th>
+                <th>Review</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reviews.map((review) => (
+                <tr key={review.id}>
+                  <td style={{ color: "#64748b" }}>{new Date(review.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
+                  <td style={{ fontWeight: "600", color: "#0f172a" }}>{review.author}</td>
+                  <td style={{ fontWeight: "500" }}>{review.product?.name || "Unknown"}</td>
+                  <td style={{ color: "#fbbf24", letterSpacing: "2px", fontSize: "1.1rem" }}>{renderStars(review.rating)}</td>
+                  <td style={{ maxWidth: "300px", color: "#475569", lineHeight: "1.5" }}>&ldquo;{review.content.substring(0, 80)}{review.content.length > 80 ? "..." : ""}&rdquo;</td>
+                  <td>
+                    <span className={`status-badge ${review.published ? "status-delivered" : "status-error"}`}>
+                      {review.published ? "Published" : "Hidden"}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="admin-action-btn"
+                      style={review.published ? { color: "#ef4444", borderColor: "#fca5a5" } : { color: "#16a34a", borderColor: "#86efac" }}
+                      disabled={togglingId === review.id}
+                      onClick={() => togglePublished(review.id, review.published)}
+                    >
+                      {review.published ? "Hide" : "Show"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   );

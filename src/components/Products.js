@@ -59,7 +59,17 @@ export default function Products() {
         </div>
       </div>
       {loading ? (
-        <div style={{ textAlign: "center", padding: "40px" }}>Loading products...</div>
+        <div className="products-grid">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <div key={i} className="product-card" style={{ padding: "18px" }}>
+               <div className="skeleton" style={{ width: "100%", height: "200px", borderRadius: "12px", marginBottom: "15px" }}></div>
+               <div className="skeleton" style={{ width: "40%", height: "15px", marginBottom: "10px" }}></div>
+               <div className="skeleton" style={{ width: "80%", height: "20px", marginBottom: "15px" }}></div>
+               <div className="skeleton" style={{ width: "100%", height: "40px", marginBottom: "15px" }}></div>
+               <div className="skeleton" style={{ width: "60%", height: "30px", marginTop: "10px", borderRadius: "50px" }}></div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="products-grid">
         {sortedProducts.map(p => (
@@ -75,7 +85,7 @@ export default function Products() {
               <div style={{ marginBottom: "8px", fontSize: "0.8rem", color: "var(--terracotta)"}}>
                 ⭐⭐⭐⭐⭐ (12)
               </div>
-              <p className="product-desc">{p.desc}</p>
+              <p className="product-desc">{p.description}</p>
               <div className="product-footer">
                 <span className="product-price">GHS {p.price.toFixed(2)}</span>
                 <button 

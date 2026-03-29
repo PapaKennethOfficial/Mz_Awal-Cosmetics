@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { DollarSign, Clock, AlertTriangle, MessageCircle } from "lucide-react";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -29,62 +30,69 @@ export default function AdminDashboard() {
       <h1 className="admin-header">Dashboard Overview</h1>
       <div className="dashboard-cards">
         <div className="dash-card">
-          <h3>Total Sales (This Month)</h3>
-          <div className="value">GHS {stats.totalSales?.toLocaleString("en-GH", { minimumFractionDigits: 2 }) || "0.00"}</div>
+          <div className="dash-card-info">
+            <h3>Total Sales (This Month)</h3>
+            <div className="value">GHS {stats.totalSales?.toLocaleString("en-GH", { minimumFractionDigits: 2 }) || "0.00"}</div>
+          </div>
+          <div className="dash-card-icon icon-sales"><DollarSign size={28} /></div>
         </div>
         <div className="dash-card">
-          <h3>Orders Pending</h3>
-          <div className="value">{stats.pendingOrders ?? 0}</div>
+          <div className="dash-card-info">
+            <h3>Orders Pending</h3>
+            <div className="value">{stats.pendingOrders ?? 0}</div>
+          </div>
+          <div className="dash-card-icon icon-orders"><Clock size={28} /></div>
         </div>
         <div className="dash-card">
-          <h3>Products Out of Stock</h3>
-          <div className="value">{stats.lowStock ?? 0}</div>
+          <div className="dash-card-info">
+            <h3>Products Out of Stock</h3>
+            <div className="value">{stats.lowStock ?? 0}</div>
+          </div>
+          <div className="dash-card-icon icon-stock"><AlertTriangle size={28} /></div>
         </div>
         <div className="dash-card">
-          <h3>New Reviews</h3>
-          <div className="value">{stats.newReviews ?? 0}</div>
+          <div className="dash-card-info">
+            <h3>New Reviews</h3>
+            <div className="value">{stats.newReviews ?? 0}</div>
+          </div>
+          <div className="dash-card-icon icon-reviews"><MessageCircle size={28} /></div>
         </div>
       </div>
 
       <h2 style={{ marginBottom: "20px", color: "#333", fontSize: "1.2rem" }}>Recent Orders</h2>
       {stats.recentOrders && stats.recentOrders.length > 0 ? (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stats.recentOrders.map((order) => (
-              <tr key={order.id}>
-                <td style={{ fontWeight: 600 }}>{order.orderNumber}</td>
-                <td>{order.customerName}</td>
-                <td>GHS {order.totalAmount?.toFixed(2)}</td>
-                <td>
-                  <span style={{
-                    background: order.orderStatus === "PROCESSING" ? "#fff3cd" :
-                      order.orderStatus === "SHIPPED" ? "#cce5ff" :
-                      order.orderStatus === "DELIVERED" ? "#d4edda" : "#f8d7da",
-                    color: order.orderStatus === "PROCESSING" ? "#856404" :
-                      order.orderStatus === "SHIPPED" ? "#004085" :
-                      order.orderStatus === "DELIVERED" ? "#155724" : "#721c24",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                    fontWeight: "bold",
-                  }}>
-                    {order.orderStatus}
-                  </span>
-                </td>
-                <td>{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {stats.recentOrders.map((order) => (
+                <tr key={order.id}>
+                  <td style={{ fontWeight: 600 }}>{order.orderNumber}</td>
+                  <td>{order.customerName}</td>
+                  <td style={{ fontWeight: 500 }}>GHS {order.totalAmount?.toFixed(2)}</td>
+                  <td>
+                    <span className={`status-badge ${
+                      order.orderStatus === "PROCESSING" ? "status-processing" :
+                      order.orderStatus === "SHIPPED" ? "status-shipped" :
+                      order.orderStatus === "DELIVERED" ? "status-delivered" : "status-error"
+                    }`}>
+                      {order.orderStatus}
+                    </span>
+                  </td>
+                  <td style={{ color: "#64748b" }}>{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p style={{ color: "#888", textAlign: "center", padding: "30px" }}>No orders yet.</p>
       )}

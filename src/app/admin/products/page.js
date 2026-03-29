@@ -41,6 +41,21 @@ export default function AdminProducts() {
     setShowModal(true);
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size exceeds 2MB limit. Please choose a smaller image.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const method = editProduct ? "PUT" : "POST";
@@ -89,7 +104,7 @@ export default function AdminProducts() {
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
         <h1 className="admin-header" style={{ marginBottom: 0 }}>Manage Products</h1>
-        <button className="admin-action-btn" style={{ padding: "10px 20px", fontSize: "0.9rem" }} onClick={openAddModal}>
+        <button className="admin-action-btn primary" style={{ padding: "10px 20px", fontSize: "0.95rem", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }} onClick={openAddModal}>
           + Add New Product
         </button>
       </div>
@@ -99,39 +114,41 @@ export default function AdminProducts() {
       ) : products.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>No products found. Add your first product!</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <img src={p.image} alt={p.name} style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "6px" }} />
-                </td>
-                <td style={{ fontWeight: "600" }}>{p.name}</td>
-                <td>{p.category.replace("-", " ").replace(/\b\w/g, c => c.toUpperCase())}</td>
-                <td>GHS {p.price?.toFixed(2)}</td>
-                <td>
-                  <span style={{ color: p.inStock ? "green" : "red", fontWeight: "bold" }}>
-                    {p.inStock ? "In Stock" : "Out of Stock"}
-                  </span>
-                </td>
-                <td>
-                  <button className="admin-action-btn" style={{ marginRight: "10px" }} onClick={() => openEditModal(p)}>Edit</button>
-                  <button className="admin-action-btn" style={{ background: "#cc0000" }} onClick={() => handleDelete(p.id)}>Delete</button>
-                </td>
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {products.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <img src={p.image} alt={p.name} style={{ width: "45px", height: "45px", objectFit: "cover", borderRadius: "8px", border: "1px solid #e2e8f0" }} />
+                  </td>
+                  <td style={{ fontWeight: "600", color: "#0f172a" }}>{p.name}</td>
+                  <td style={{ color: "#64748b" }}>{p.category.replace("-", " ").replace(/\b\w/g, c => c.toUpperCase())}</td>
+                  <td style={{ fontWeight: "500" }}>GHS {p.price?.toFixed(2)}</td>
+                  <td>
+                    <span className={`status-badge ${p.inStock ? "status-delivered" : "status-error"}`}>
+                      {p.inStock ? "In Stock" : "Out of Stock"}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="admin-action-btn" style={{ marginRight: "10px" }} onClick={() => openEditModal(p)}>Edit</button>
+                    <button className="admin-action-btn" style={{ color: "#ef4444", borderColor: "#fca5a5" }} onClick={() => handleDelete(p.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Add/Edit Modal */}
@@ -160,8 +177,18 @@ export default function AdminProducts() {
                 </select>
               </div>
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", marginBottom: "4px", fontWeight: 600, fontSize: "0.85rem" }}>Image URL</label>
-                <input style={inputStyle} value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} required />
+                <label style={{ display: "block", marginBottom: "4px", fontWeight: 600, fontSize: "0.85rem" }}>Product Image</label>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "8px", padding: "8px", background: "#f8fafc", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} style={{ fontSize: "0.85rem", flex: 1 }} />
+                  <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 500 }}>Max 2MB</span>
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "#64748b", marginBottom: "4px", textAlign: "center" }}>OR PASTE AN IMAGE URL</div>
+                <input style={inputStyle} placeholder="https://..." value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} required />
+                {form.image && (
+                  <div style={{ marginTop: "10px", textAlign: "center" }}>
+                    <img src={form.image} alt="Preview" style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px", border: "1px solid #e2e8f0" }} />
+                  </div>
+                )}
               </div>
               <div style={{ marginBottom: "14px" }}>
                 <label style={{ display: "block", marginBottom: "4px", fontWeight: 600, fontSize: "0.85rem" }}>Price (GHS)</label>
@@ -181,7 +208,7 @@ export default function AdminProducts() {
                   <span style={{ fontWeight: 600, fontSize: "0.85rem" }}>In Stock</span>
                 </label>
               </div>
-              <button type="submit" className="admin-action-btn" style={{ width: "100%", padding: "12px", fontSize: "1rem" }}>
+              <button type="submit" className="admin-action-btn primary" style={{ width: "100%", padding: "12px", fontSize: "1rem", justifyContent: "center" }}>
                 {editProduct ? "Save Changes" : "Add Product"}
               </button>
             </form>

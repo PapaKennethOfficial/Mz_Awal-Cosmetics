@@ -9,6 +9,7 @@ import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import CartSidebar from "../components/CartSidebar";
 import PaymentModal from "../components/PaymentModal";
+import FloatingButtons from "../components/FloatingButtons";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
       <Footer />
       <CartSidebar />
       <PaymentModal />
+      <FloatingButtons />
     </>
   );
 }

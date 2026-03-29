@@ -1,5 +1,4 @@
-import Link from "next/link";
-import AdminLogoutButton from "../../components/AdminLogoutButton";
+import AdminSidebar from "../../components/AdminSidebar";
 import "./admin.css";
 
 export const metadata = {
@@ -9,22 +8,7 @@ export const metadata = {
 export default function AdminLayout({ children }) {
   return (
     <div className="admin-container">
-      <aside className="admin-sidebar">
-        <div className="admin-logo">
-          Mz.<span>Awal&apos;s</span>
-          <br />Admin
-        </div>
-        <nav className="admin-nav">
-          <Link href="/admin">Dashboard</Link>
-          <Link href="/admin/orders">Orders</Link>
-          <Link href="/admin/products">Products</Link>
-          <Link href="/admin/reviews">Reviews</Link>
-          <Link href="/">← Storefront</Link>
-        </nav>
-        <div style={{ marginTop: "auto", padding: "20px" }}>
-          <AdminLogoutButton />
-        </div>
-      </aside>
+      <AdminSidebar />
       <main className="admin-main">
         {children}
       </main>

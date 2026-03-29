@@ -67,9 +67,9 @@ export default function AdminOrders() {
             placeholder="Search by Order ID or Name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: "10px 15px", borderRadius: "8px", border: "1px solid #ddd", width: "300px" }}
+            style={{ padding: "10px 15px", borderRadius: "8px", border: "1px solid #cbd5e1", width: "300px", fontSize: "0.95rem" }}
           />
-          <button type="submit" className="admin-action-btn">Search</button>
+          <button type="submit" className="admin-action-btn primary">Search</button>
         </form>
         <select
           value={statusFilter}
@@ -89,55 +89,54 @@ export default function AdminOrders() {
       ) : orders.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>No orders found.</div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td style={{ fontWeight: "600" }}>{order.orderNumber}</td>
-                <td>{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
-                <td>{order.customerName}</td>
-                <td>GHS {order.totalAmount?.toFixed(2)}</td>
-                <td>{order.paymentMethod}</td>
-                <td>
-                  <span style={{
-                    background: statusColors[order.orderStatus]?.bg || "#eee",
-                    color: statusColors[order.orderStatus]?.color || "#333",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "0.8rem",
-                    fontWeight: "bold",
-                  }}>
-                    {order.orderStatus}
-                  </span>
-                </td>
-                <td>
-                  <select
-                    value={order.orderStatus}
-                    disabled={updatingId === order.id}
-                    onChange={(e) => updateStatus(order.id, e.target.value)}
-                    style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid #ddd", fontSize: "0.8rem" }}
-                  >
-                    <option value="PROCESSING">Processing</option>
-                    <option value="SHIPPED">Shipped</option>
-                    <option value="DELIVERED">Delivered</option>
-                    <option value="CANCELLED">Cancelled</option>
-                  </select>
-                </td>
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id}>
+                  <td style={{ fontWeight: "600", color: "var(--forest)" }}>{order.orderNumber}</td>
+                  <td style={{ color: "#64748b" }}>{new Date(order.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</td>
+                  <td style={{ fontWeight: "500" }}>{order.customerName}</td>
+                  <td>GHS {order.totalAmount?.toFixed(2)}</td>
+                  <td>{order.paymentMethod}</td>
+                  <td>
+                    <span className={`status-badge ${
+                      order.orderStatus === "PROCESSING" ? "status-processing" :
+                      order.orderStatus === "SHIPPED" ? "status-shipped" :
+                      order.orderStatus === "DELIVERED" ? "status-delivered" : "status-error"
+                    }`}>
+                      {order.orderStatus}
+                    </span>
+                  </td>
+                  <td>
+                    <select
+                      value={order.orderStatus}
+                      disabled={updatingId === order.id}
+                      onChange={(e) => updateStatus(order.id, e.target.value)}
+                      style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "#f8fafc", color: "#334155", cursor: "pointer" }}
+                    >
+                      <option value="PROCESSING">Processing</option>
+                      <option value="SHIPPED">Shipped</option>
+                      <option value="DELIVERED">Delivered</option>
+                      <option value="CANCELLED">Cancelled</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   );
